@@ -7210,6 +7210,11 @@ var _truqu$elm_base64$Base64_Encode$encode = function (input) {
 var _truqu$elm_base64$Base64$decode = _truqu$elm_base64$Base64_Decode$decode;
 var _truqu$elm_base64$Base64$encode = _truqu$elm_base64$Base64_Encode$encode;
 
+var _user$project$Mixpanel_ops = _user$project$Mixpanel_ops || {};
+_user$project$Mixpanel_ops['=>'] = F2(
+	function (v0, v1) {
+		return {ctor: '_Tuple2', _0: v0, _1: v1};
+	});
 var _user$project$Mixpanel$send = F3(
 	function (baseUrl, path, data) {
 		return A2(
@@ -7232,15 +7237,57 @@ var _user$project$Mixpanel$send = F3(
 									A2(_elm_lang$core$Json_Encode$encode, 0, data))))))));
 	});
 var _user$project$Mixpanel$track = F2(
-	function (root, event) {
+	function (_p1, event) {
+		var _p2 = _p1;
 		return A3(
 			_user$project$Mixpanel$send,
-			root,
+			_p2.baseUrl,
 			'/track',
 			_elm_lang$core$Json_Encode$object(
-				{ctor: '[]'}));
+				{
+					ctor: '::',
+					_0: A2(
+						_user$project$Mixpanel_ops['=>'],
+						'event',
+						_elm_lang$core$Json_Encode$string(event.event)),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_user$project$Mixpanel_ops['=>'],
+							'properties',
+							_elm_lang$core$Json_Encode$object(
+								{
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'token',
+										_1: _elm_lang$core$Json_Encode$string(_p2.token)
+									},
+									_1: event.properties
+								})),
+						_1: {ctor: '[]'}
+					}
+				}));
+	});
+var _user$project$Mixpanel$Config = F2(
+	function (a, b) {
+		return {baseUrl: a, token: b};
+	});
+var _user$project$Mixpanel$Event = F2(
+	function (a, b) {
+		return {event: a, properties: b};
 	});
 
+var _user$project$Main$track = F2(
+	function (url, token) {
+		return A2(
+			_user$project$Mixpanel$track,
+			{baseUrl: url, token: token},
+			{
+				event: 'game',
+				properties: {ctor: '[]'}
+			});
+	});
 var _user$project$Main$sendResult = function (_p0) {
 	var _p1 = _p0;
 	return {
@@ -7251,7 +7298,7 @@ var _user$project$Main$sendResult = function (_p0) {
 			function (_p2) {
 				return {ctor: '_Tuple0'};
 			},
-			A2(_user$project$Mixpanel$track, _p1.url, 'cool'))
+			A2(_user$project$Main$track, _p1.url, _p1.token))
 	};
 };
 var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(
@@ -7274,16 +7321,21 @@ var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(
 		function (command) {
 			return A2(
 				_elm_lang$core$Json_Decode$andThen,
-				function (url) {
-					return _elm_lang$core$Json_Decode$succeed(
-						{command: command, url: url});
+				function (token) {
+					return A2(
+						_elm_lang$core$Json_Decode$andThen,
+						function (url) {
+							return _elm_lang$core$Json_Decode$succeed(
+								{command: command, token: token, url: url});
+						},
+						A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string));
 				},
-				A2(_elm_lang$core$Json_Decode$field, 'url', _elm_lang$core$Json_Decode$string));
+				A2(_elm_lang$core$Json_Decode$field, 'token', _elm_lang$core$Json_Decode$string));
 		},
 		A2(_elm_lang$core$Json_Decode$field, 'command', _elm_lang$core$Json_Decode$string)));
-var _user$project$Main$Flags = F2(
-	function (a, b) {
-		return {url: a, command: b};
+var _user$project$Main$Flags = F3(
+	function (a, b, c) {
+		return {url: a, token: b, command: c};
 	});
 
 var Elm = {};

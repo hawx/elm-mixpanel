@@ -19,12 +19,12 @@ server.listen(3000, function () {
 });
 
 test(async t => {
-  Elm.Main.worker({ url: 'http://localhost:3000', command: 'thing' });
+  Elm.Main.worker({ url: 'http://localhost:3000', token: 'what', command: 'thing' });
 
   const data = Buffer.from((await tracked).data, 'base64').toString('utf8');
   const obj = JSON.parse(data);
 
-  t.deepEqual(obj, {});
+  t.deepEqual(obj, {event: 'game', properties: { token: 'what' }});
 });
 
 test.after(() => {
