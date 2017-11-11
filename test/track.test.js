@@ -20,8 +20,11 @@ server.listen(3000, function () {
 
 test(async t => {
   Elm.Main.worker({ url: 'http://localhost:3000', command: 'thing' });
-  const result = await tracked;
-  t.deepEqual(result.data, '');
+
+  const data = Buffer.from((await tracked).data, 'base64').toString('utf8');
+  const obj = JSON.parse(data);
+
+  t.deepEqual(obj, {});
 });
 
 test.after(() => {

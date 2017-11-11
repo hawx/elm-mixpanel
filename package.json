@@ -7,7 +7,7 @@
         "test": "test"
     },
     "scripts": {
-        "pretest": "cd test/project && elm make Main.elm --output main.js",
+        "pretest": "elm make test/project/Main.elm --output test/project/main.js",
         "test": "ava test/**/*.test.js"
     },
     "keywords": [],
