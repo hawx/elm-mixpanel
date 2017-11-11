@@ -6539,7 +6539,7 @@ var _user$project$Mixpanel$track = F2(
 			},
 			_elm_lang$http$Http$toTask(
 				_elm_lang$http$Http$getString(
-					A2(_elm_lang$core$Basics_ops['++'], root, '/track'))));
+					A2(_elm_lang$core$Basics_ops['++'], root, '/track?data='))));
 	});
 
 var _user$project$Main$sendResult = function (_p0) {

@@ -6,4 +6,4 @@ import Task exposing (Task)
 
 track : String -> String -> Task Http.Error ()
 track root event =
-    Http.getString (root ++ "/track") |> Http.toTask |> Task.map (\_ -> ())
+    Http.getString (root ++ "/track?data=") |> Http.toTask |> Task.map (\_ -> ())
