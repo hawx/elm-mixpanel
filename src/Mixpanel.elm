@@ -7,9 +7,6 @@ import Json.Encode as Json exposing (Value)
 import Task exposing (Task)
 
 
-{- {"event": "game", "properties": {"ip": "123.123.123.123", "distinct_id": "13793", "token": "e3bb4100330c35722740fb8c6f5abddc", "time": 1245613885, "action": "play"}} -}
-
-
 type alias Config =
     { baseUrl : String
     , token : String
@@ -24,13 +21,11 @@ type alias Event =
 
 track : Config -> Event -> Task Http.Error ()
 track { baseUrl, token } event =
-    send baseUrl
-        "/track"
-        (Json.object
-            [ "event" => Json.string event.event
-            , "properties" => Json.object (( "token", Json.string token ) :: event.properties)
-            ]
-        )
+    Json.object
+        [ "event" => Json.string event.event
+        , "properties" => Json.object (( "token", Json.string token ) :: event.properties)
+        ]
+        |> send baseUrl "/track"
 
 
 send : String -> String -> Value -> Task Http.Error ()
