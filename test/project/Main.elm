@@ -1,8 +1,9 @@
 port module Main exposing (..)
 
+import Http
 import Json.Encode as Json
 import Mixpanel
-import Task
+import Task exposing (Task)
 
 
 type alias Flags =
@@ -20,79 +21,74 @@ main =
 
 sendResult : Flags -> ( (), Cmd () )
 sendResult { url, token, command } =
-    ( (), Task.attempt (\_ -> ()) (runCommand url token command) )
+    ( (), Task.attempt (\_ -> ()) (runCommand { baseUrl = url, token = token } command) )
 
 
-runCommand url token command =
+runCommand : Mixpanel.Config -> String -> Task Http.Error ()
+runCommand config command =
     case command of
         "track" ->
-            track url token
+            track config
 
-        "engage" ->
-            engage url token
+        "engage_set" ->
+            engageSet config
 
         "engage_set_once" ->
-            engageSetOnce url token
+            engageSetOnce config
 
         "engage_add" ->
-            engageAdd url token
+            engageAdd config
 
         "engage_append" ->
-            engageAppend url token
+            engageAppend config
 
         "engage_union" ->
-            engageUnion url token
+            engageUnion config
 
         "engage_remove" ->
-            engageRemove url token
+            engageRemove config
 
         "engage_unset" ->
-            engageUnset url token
+            engageUnset config
 
         "engage_delete" ->
-            engageDelete url token
+            engageDelete config
 
         _ ->
             Task.succeed ()
 
 
-track url token =
-    Mixpanel.track
-        { baseUrl = url, token = token }
+track config =
+    Mixpanel.track config
         { event = "game", properties = [] }
 
 
-engage url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageSet config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.Set [ ( "Address", Json.string "123 Fake Street" ) ])
 
 
-engageSetOnce url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageSetOnce config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.SetOnce [ ( "Address", Json.string "123 Fake Street" ) ])
 
 
-engageAdd url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageAdd config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.Add [ ( "Coins Gathered", Json.int 12 ) ])
 
 
-engageAppend url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageAppend config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.Append [ ( "Power Ups", Json.string "Bubble Lead" ) ])
 
 
-engageUnion url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageUnion config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.Union
             [ ( "Items Purchased"
@@ -105,22 +101,19 @@ engageUnion url token =
         )
 
 
-engageRemove url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageRemove config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.Remove [ ( "Items Purchased", Json.string "socks" ) ])
 
 
-engageUnset url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageUnset config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         (Mixpanel.Unset [ "Days Overdue" ])
 
 
-engageDelete url token =
-    Mixpanel.engage
-        { baseUrl = url, token = token }
+engageDelete config =
+    Mixpanel.engage config
         { distinctId = "12345" }
         Mixpanel.Delete

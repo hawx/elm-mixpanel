@@ -7376,170 +7376,161 @@ var _user$project$Mixpanel$Set = function (a) {
 	return {ctor: 'Set', _0: a};
 };
 
-var _user$project$Main$engageDelete = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Delete);
-	});
-var _user$project$Main$engageUnset = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Unset(
-				{
-					ctor: '::',
-					_0: 'Days Overdue',
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$engageRemove = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Remove(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'Items Purchased',
-						_1: _elm_lang$core$Json_Encode$string('socks')
-					},
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$engageUnion = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Union(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'Items Purchased',
-						_1: _elm_lang$core$Json_Encode$list(
-							{
-								ctor: '::',
-								_0: _elm_lang$core$Json_Encode$string('socks'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$core$Json_Encode$string('shirts'),
-									_1: {ctor: '[]'}
-								}
-							})
-					},
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$engageAppend = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Append(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'Power Ups',
-						_1: _elm_lang$core$Json_Encode$string('Bubble Lead')
-					},
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$engageAdd = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Add(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'Coins Gathered',
-						_1: _elm_lang$core$Json_Encode$int(12)
-					},
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$engageSetOnce = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$SetOnce(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'Address',
-						_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
-					},
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$engage = F2(
-	function (url, token) {
-		return A3(
-			_user$project$Mixpanel$engage,
-			{baseUrl: url, token: token},
-			{distinctId: '12345'},
-			_user$project$Mixpanel$Set(
-				{
-					ctor: '::',
-					_0: {
-						ctor: '_Tuple2',
-						_0: 'Address',
-						_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
-					},
-					_1: {ctor: '[]'}
-				}));
-	});
-var _user$project$Main$track = F2(
-	function (url, token) {
-		return A2(
-			_user$project$Mixpanel$track,
-			{baseUrl: url, token: token},
+var _user$project$Main$engageDelete = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Delete);
+};
+var _user$project$Main$engageUnset = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Unset(
 			{
-				event: 'game',
-				properties: {ctor: '[]'}
-			});
-	});
-var _user$project$Main$runCommand = F3(
-	function (url, token, command) {
+				ctor: '::',
+				_0: 'Days Overdue',
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$engageRemove = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Remove(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Items Purchased',
+					_1: _elm_lang$core$Json_Encode$string('socks')
+				},
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$engageUnion = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Union(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Items Purchased',
+					_1: _elm_lang$core$Json_Encode$list(
+						{
+							ctor: '::',
+							_0: _elm_lang$core$Json_Encode$string('socks'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$core$Json_Encode$string('shirts'),
+								_1: {ctor: '[]'}
+							}
+						})
+				},
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$engageAppend = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Append(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Power Ups',
+					_1: _elm_lang$core$Json_Encode$string('Bubble Lead')
+				},
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$engageAdd = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Add(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Coins Gathered',
+					_1: _elm_lang$core$Json_Encode$int(12)
+				},
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$engageSetOnce = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$SetOnce(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Address',
+					_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
+				},
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$engageSet = function (config) {
+	return A3(
+		_user$project$Mixpanel$engage,
+		config,
+		{distinctId: '12345'},
+		_user$project$Mixpanel$Set(
+			{
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple2',
+					_0: 'Address',
+					_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
+				},
+				_1: {ctor: '[]'}
+			}));
+};
+var _user$project$Main$track = function (config) {
+	return A2(
+		_user$project$Mixpanel$track,
+		config,
+		{
+			event: 'game',
+			properties: {ctor: '[]'}
+		});
+};
+var _user$project$Main$runCommand = F2(
+	function (config, command) {
 		var _p0 = command;
 		switch (_p0) {
 			case 'track':
-				return A2(_user$project$Main$track, url, token);
-			case 'engage':
-				return A2(_user$project$Main$engage, url, token);
+				return _user$project$Main$track(config);
+			case 'engage_set':
+				return _user$project$Main$engageSet(config);
 			case 'engage_set_once':
-				return A2(_user$project$Main$engageSetOnce, url, token);
+				return _user$project$Main$engageSetOnce(config);
 			case 'engage_add':
-				return A2(_user$project$Main$engageAdd, url, token);
+				return _user$project$Main$engageAdd(config);
 			case 'engage_append':
-				return A2(_user$project$Main$engageAppend, url, token);
+				return _user$project$Main$engageAppend(config);
 			case 'engage_union':
-				return A2(_user$project$Main$engageUnion, url, token);
+				return _user$project$Main$engageUnion(config);
 			case 'engage_remove':
-				return A2(_user$project$Main$engageRemove, url, token);
+				return _user$project$Main$engageRemove(config);
 			case 'engage_unset':
-				return A2(_user$project$Main$engageUnset, url, token);
+				return _user$project$Main$engageUnset(config);
 			case 'engage_delete':
-				return A2(_user$project$Main$engageDelete, url, token);
+				return _user$project$Main$engageDelete(config);
 			default:
 				return _elm_lang$core$Task$succeed(
 					{ctor: '_Tuple0'});
@@ -7555,7 +7546,10 @@ var _user$project$Main$sendResult = function (_p1) {
 			function (_p3) {
 				return {ctor: '_Tuple0'};
 			},
-			A3(_user$project$Main$runCommand, _p2.url, _p2.token, _p2.command))
+			A2(
+				_user$project$Main$runCommand,
+				{baseUrl: _p2.url, token: _p2.token},
+				_p2.command))
 	};
 };
 var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(

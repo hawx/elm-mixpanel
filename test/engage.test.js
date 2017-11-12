@@ -34,7 +34,7 @@ test.before(() => {
 test.serial('$set', async t => {
   const engaged = promiseMe();
 
-  Elm.Main.worker({ url: 'http://localhost:3001', token: 'what', command: 'engage' });
+  Elm.Main.worker({ url: 'http://localhost:3001', token: 'what', command: 'engage_set' });
 
   const data = Buffer.from((await engaged).data, 'base64').toString('utf8');
   const obj = JSON.parse(data);
