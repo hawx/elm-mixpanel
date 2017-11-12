@@ -64,56 +64,53 @@ track config =
 
 
 engageSet config =
-    Mixpanel.engage config
+    Mixpanel.peopleSet config
         { distinctId = "12345" }
-        (Mixpanel.Set [ ( "Address", Json.string "123 Fake Street" ) ])
+        [ ( "Address", Json.string "123 Fake Street" ) ]
 
 
 engageSetOnce config =
-    Mixpanel.engage config
+    Mixpanel.peopleSetOnce config
         { distinctId = "12345" }
-        (Mixpanel.SetOnce [ ( "Address", Json.string "123 Fake Street" ) ])
+        [ ( "Address", Json.string "123 Fake Street" ) ]
 
 
 engageAdd config =
-    Mixpanel.engage config
+    Mixpanel.peopleAdd config
         { distinctId = "12345" }
-        (Mixpanel.Add [ ( "Coins Gathered", Json.int 12 ) ])
+        [ ( "Coins Gathered", Json.int 12 ) ]
 
 
 engageAppend config =
-    Mixpanel.engage config
+    Mixpanel.peopleAppend config
         { distinctId = "12345" }
-        (Mixpanel.Append [ ( "Power Ups", Json.string "Bubble Lead" ) ])
+        [ ( "Power Ups", Json.string "Bubble Lead" ) ]
 
 
 engageUnion config =
-    Mixpanel.engage config
+    Mixpanel.peopleUnion config
         { distinctId = "12345" }
-        (Mixpanel.Union
-            [ ( "Items Purchased"
-              , Json.list
-                    [ Json.string "socks"
-                    , Json.string "shirts"
-                    ]
-              )
-            ]
-        )
+        [ ( "Items Purchased"
+          , Json.list
+                [ Json.string "socks"
+                , Json.string "shirts"
+                ]
+          )
+        ]
 
 
 engageRemove config =
-    Mixpanel.engage config
+    Mixpanel.peopleRemove config
         { distinctId = "12345" }
-        (Mixpanel.Remove [ ( "Items Purchased", Json.string "socks" ) ])
+        [ ( "Items Purchased", Json.string "socks" ) ]
 
 
 engageUnset config =
-    Mixpanel.engage config
+    Mixpanel.peopleUnset config
         { distinctId = "12345" }
-        (Mixpanel.Unset [ "Days Overdue" ])
+        [ "Days Overdue" ]
 
 
 engageDelete config =
-    Mixpanel.engage config
+    Mixpanel.peopleDelete config
         { distinctId = "12345" }
-        Mixpanel.Delete

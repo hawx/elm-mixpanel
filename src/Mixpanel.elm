@@ -1,4 +1,19 @@
-module Mixpanel exposing (Config, Event, UpdateOperation(..), engage, track)
+module Mixpanel
+    exposing
+        ( Config
+        , EngageProperties
+        , Event
+        , Properties
+        , peopleAdd
+        , peopleAppend
+        , peopleDelete
+        , peopleRemove
+        , peopleSet
+        , peopleSetOnce
+        , peopleUnion
+        , peopleUnset
+        , track
+        )
 
 import Base64
 import Dict exposing (Dict)
@@ -13,10 +28,18 @@ type alias Config =
     }
 
 
+type alias Properties =
+    List ( String, Value )
+
+
 type alias Event =
     { event : String
-    , properties : List ( String, Value )
+    , properties : Properties
     }
+
+
+type alias EngageProperties =
+    { distinctId : String }
 
 
 track : Config -> Event -> Task Http.Error ()
@@ -28,50 +51,52 @@ track { baseUrl, token } event =
         |> send baseUrl "/track"
 
 
-type UpdateOperation
-    = Set (List ( String, Value ))
-    | SetOnce (List ( String, Value ))
-    | Add (List ( String, Value ))
-    | Append (List ( String, Value ))
-    | Union (List ( String, Value ))
-    | Remove (List ( String, Value ))
-    | Unset (List String)
-    | Delete
+peopleSet : Config -> EngageProperties -> Properties -> Task Http.Error ()
+peopleSet config engageProperties properties =
+    engage config engageProperties "$set" (Json.object properties)
 
 
-type alias EngageProperties =
-    { distinctId : String }
+peopleSetOnce : Config -> EngageProperties -> Properties -> Task Http.Error ()
+peopleSetOnce config engageProperties properties =
+    engage config engageProperties "$set_once" (Json.object properties)
 
 
-engage : Config -> EngageProperties -> UpdateOperation -> Task Http.Error ()
-engage { baseUrl, token } properties operation =
+peopleAdd : Config -> EngageProperties -> Properties -> Task Http.Error ()
+peopleAdd config engageProperties properties =
+    engage config engageProperties "$add" (Json.object properties)
+
+
+peopleAppend : Config -> EngageProperties -> Properties -> Task Http.Error ()
+peopleAppend config engageProperties properties =
+    engage config engageProperties "$append" (Json.object properties)
+
+
+peopleUnion : Config -> EngageProperties -> Properties -> Task Http.Error ()
+peopleUnion config engageProperties properties =
+    engage config engageProperties "$union" (Json.object properties)
+
+
+peopleRemove : Config -> EngageProperties -> Properties -> Task Http.Error ()
+peopleRemove config engageProperties properties =
+    engage config engageProperties "$remove" (Json.object properties)
+
+
+peopleUnset : Config -> EngageProperties -> List String -> Task Http.Error ()
+peopleUnset config engageProperties list =
+    engage config engageProperties "$unset" (Json.list (List.map Json.string list))
+
+
+peopleDelete : Config -> EngageProperties -> Task Http.Error ()
+peopleDelete config engageProperties =
+    engage config engageProperties "$delete" (Json.string "")
+
+
+engage : Config -> EngageProperties -> String -> Value -> Task Http.Error ()
+engage { baseUrl, token } properties operation value =
     Json.object
         [ "$token" => Json.string token
         , "$distinct_id" => Json.string properties.distinctId
-        , case operation of
-            Set object ->
-                "$set" => Json.object object
-
-            SetOnce object ->
-                "$set_once" => Json.object object
-
-            Add object ->
-                "$add" => Json.object object
-
-            Append object ->
-                "$append" => Json.object object
-
-            Union object ->
-                "$union" => Json.object object
-
-            Remove object ->
-                "$remove" => Json.object object
-
-            Unset list ->
-                "$unset" => Json.list (List.map Json.string list)
-
-            Delete ->
-                "$delete" => Json.string ""
+        , operation => value
         ]
         |> send baseUrl "/engage"
 

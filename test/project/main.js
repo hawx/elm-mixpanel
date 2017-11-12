@@ -7236,8 +7236,8 @@ var _user$project$Mixpanel$send = F3(
 								_truqu$elm_base64$Base64$encode(
 									A2(_elm_lang$core$Json_Encode$encode, 0, data))))))));
 	});
-var _user$project$Mixpanel$engage = F3(
-	function (_p1, properties, operation) {
+var _user$project$Mixpanel$engage = F4(
+	function (_p1, properties, operation, value) {
 		var _p2 = _p1;
 		return A3(
 			_user$project$Mixpanel$send,
@@ -7258,63 +7258,91 @@ var _user$project$Mixpanel$engage = F3(
 							_elm_lang$core$Json_Encode$string(properties.distinctId)),
 						_1: {
 							ctor: '::',
-							_0: function () {
-								var _p3 = operation;
-								switch (_p3.ctor) {
-									case 'Set':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$set',
-											_elm_lang$core$Json_Encode$object(_p3._0));
-									case 'SetOnce':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$set_once',
-											_elm_lang$core$Json_Encode$object(_p3._0));
-									case 'Add':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$add',
-											_elm_lang$core$Json_Encode$object(_p3._0));
-									case 'Append':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$append',
-											_elm_lang$core$Json_Encode$object(_p3._0));
-									case 'Union':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$union',
-											_elm_lang$core$Json_Encode$object(_p3._0));
-									case 'Remove':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$remove',
-											_elm_lang$core$Json_Encode$object(_p3._0));
-									case 'Unset':
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$unset',
-											_elm_lang$core$Json_Encode$list(
-												A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, _p3._0)));
-									default:
-										return A2(
-											_user$project$Mixpanel_ops['=>'],
-											'$delete',
-											_elm_lang$core$Json_Encode$string(''));
-								}
-							}(),
+							_0: A2(_user$project$Mixpanel_ops['=>'], operation, value),
 							_1: {ctor: '[]'}
 						}
 					}
 				}));
 	});
+var _user$project$Mixpanel$peopleDelete = F2(
+	function (config, engageProperties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$delete',
+			_elm_lang$core$Json_Encode$string(''));
+	});
+var _user$project$Mixpanel$peopleUnset = F3(
+	function (config, engageProperties, list) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$unset',
+			_elm_lang$core$Json_Encode$list(
+				A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, list)));
+	});
+var _user$project$Mixpanel$peopleRemove = F3(
+	function (config, engageProperties, properties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$remove',
+			_elm_lang$core$Json_Encode$object(properties));
+	});
+var _user$project$Mixpanel$peopleUnion = F3(
+	function (config, engageProperties, properties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$union',
+			_elm_lang$core$Json_Encode$object(properties));
+	});
+var _user$project$Mixpanel$peopleAppend = F3(
+	function (config, engageProperties, properties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$append',
+			_elm_lang$core$Json_Encode$object(properties));
+	});
+var _user$project$Mixpanel$peopleAdd = F3(
+	function (config, engageProperties, properties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$add',
+			_elm_lang$core$Json_Encode$object(properties));
+	});
+var _user$project$Mixpanel$peopleSetOnce = F3(
+	function (config, engageProperties, properties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$set_once',
+			_elm_lang$core$Json_Encode$object(properties));
+	});
+var _user$project$Mixpanel$peopleSet = F3(
+	function (config, engageProperties, properties) {
+		return A4(
+			_user$project$Mixpanel$engage,
+			config,
+			engageProperties,
+			'$set',
+			_elm_lang$core$Json_Encode$object(properties));
+	});
 var _user$project$Mixpanel$track = F2(
-	function (_p4, event) {
-		var _p5 = _p4;
+	function (_p3, event) {
+		var _p4 = _p3;
 		return A3(
 			_user$project$Mixpanel$send,
-			_p5.baseUrl,
+			_p4.baseUrl,
 			'/track',
 			_elm_lang$core$Json_Encode$object(
 				{
@@ -7334,7 +7362,7 @@ var _user$project$Mixpanel$track = F2(
 									_0: {
 										ctor: '_Tuple2',
 										_0: 'token',
-										_1: _elm_lang$core$Json_Encode$string(_p5.token)
+										_1: _elm_lang$core$Json_Encode$string(_p4.token)
 									},
 									_1: event.properties
 								})),
@@ -7353,152 +7381,122 @@ var _user$project$Mixpanel$Event = F2(
 var _user$project$Mixpanel$EngageProperties = function (a) {
 	return {distinctId: a};
 };
-var _user$project$Mixpanel$Delete = {ctor: 'Delete'};
-var _user$project$Mixpanel$Unset = function (a) {
-	return {ctor: 'Unset', _0: a};
-};
-var _user$project$Mixpanel$Remove = function (a) {
-	return {ctor: 'Remove', _0: a};
-};
-var _user$project$Mixpanel$Union = function (a) {
-	return {ctor: 'Union', _0: a};
-};
-var _user$project$Mixpanel$Append = function (a) {
-	return {ctor: 'Append', _0: a};
-};
-var _user$project$Mixpanel$Add = function (a) {
-	return {ctor: 'Add', _0: a};
-};
-var _user$project$Mixpanel$SetOnce = function (a) {
-	return {ctor: 'SetOnce', _0: a};
-};
-var _user$project$Mixpanel$Set = function (a) {
-	return {ctor: 'Set', _0: a};
-};
 
 var _user$project$Main$engageDelete = function (config) {
-	return A3(
-		_user$project$Mixpanel$engage,
+	return A2(
+		_user$project$Mixpanel$peopleDelete,
 		config,
-		{distinctId: '12345'},
-		_user$project$Mixpanel$Delete);
+		{distinctId: '12345'});
 };
 var _user$project$Main$engageUnset = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleUnset,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$Unset(
-			{
-				ctor: '::',
-				_0: 'Days Overdue',
-				_1: {ctor: '[]'}
-			}));
+		{
+			ctor: '::',
+			_0: 'Days Overdue',
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$engageRemove = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleRemove,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$Remove(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'Items Purchased',
-					_1: _elm_lang$core$Json_Encode$string('socks')
-				},
-				_1: {ctor: '[]'}
-			}));
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Items Purchased',
+				_1: _elm_lang$core$Json_Encode$string('socks')
+			},
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$engageUnion = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleUnion,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$Union(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'Items Purchased',
-					_1: _elm_lang$core$Json_Encode$list(
-						{
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Items Purchased',
+				_1: _elm_lang$core$Json_Encode$list(
+					{
+						ctor: '::',
+						_0: _elm_lang$core$Json_Encode$string('socks'),
+						_1: {
 							ctor: '::',
-							_0: _elm_lang$core$Json_Encode$string('socks'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$core$Json_Encode$string('shirts'),
-								_1: {ctor: '[]'}
-							}
-						})
-				},
-				_1: {ctor: '[]'}
-			}));
+							_0: _elm_lang$core$Json_Encode$string('shirts'),
+							_1: {ctor: '[]'}
+						}
+					})
+			},
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$engageAppend = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleAppend,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$Append(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'Power Ups',
-					_1: _elm_lang$core$Json_Encode$string('Bubble Lead')
-				},
-				_1: {ctor: '[]'}
-			}));
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Power Ups',
+				_1: _elm_lang$core$Json_Encode$string('Bubble Lead')
+			},
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$engageAdd = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleAdd,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$Add(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'Coins Gathered',
-					_1: _elm_lang$core$Json_Encode$int(12)
-				},
-				_1: {ctor: '[]'}
-			}));
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Coins Gathered',
+				_1: _elm_lang$core$Json_Encode$int(12)
+			},
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$engageSetOnce = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleSetOnce,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$SetOnce(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'Address',
-					_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
-				},
-				_1: {ctor: '[]'}
-			}));
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Address',
+				_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
+			},
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$engageSet = function (config) {
 	return A3(
-		_user$project$Mixpanel$engage,
+		_user$project$Mixpanel$peopleSet,
 		config,
 		{distinctId: '12345'},
-		_user$project$Mixpanel$Set(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '_Tuple2',
-					_0: 'Address',
-					_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
-				},
-				_1: {ctor: '[]'}
-			}));
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'Address',
+				_1: _elm_lang$core$Json_Encode$string('123 Fake Street')
+			},
+			_1: {ctor: '[]'}
+		});
 };
 var _user$project$Main$track = function (config) {
 	return A2(
