@@ -10,16 +10,23 @@ const app = express();
 const tracked = new Promise((resolve, reject) => {
   app.get('/track', (req, res) => {
     resolve(req.query);
-    res.send('ok');
+    res.send('1');
   });
 });
+
 const server = createServer(app);
-server.listen(3000, function () {
-  console.log('listening at :3000');
+
+test.before(() => {
+  return new Promise((resolve) => {
+    server.listen(3000, function () {
+      console.log('listening at :3000');
+      resolve();
+    });
+  });
 });
 
 test(async t => {
-  Elm.Main.worker({ url: 'http://localhost:3000', token: 'what', command: 'thing' });
+  Elm.Main.worker({ url: 'http://localhost:3000', token: 'what', command: 'track' });
 
   const data = Buffer.from((await tracked).data, 'base64').toString('utf8');
   const obj = JSON.parse(data);
