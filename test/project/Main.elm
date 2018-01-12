@@ -21,7 +21,7 @@ main =
 
 sendResult : Flags -> ( (), Cmd () )
 sendResult { url, token, command } =
-    ( (), Task.attempt (\_ -> ()) (runCommand { baseUrl = url, token = token } command) )
+    ( (), Task.attempt (\_ -> ()) (runCommand { baseUrl = url, token = token, ip = True } command) )
 
 
 runCommand : Mixpanel.Config -> String -> Task Http.Error ()

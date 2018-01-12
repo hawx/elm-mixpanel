@@ -6915,23 +6915,41 @@ var _truqu$elm_base64$Base64_Decode$wrapUp = function (_p11) {
 };
 var _truqu$elm_base64$Base64_Decode$stripNulls = F2(
 	function (input, output) {
-		return (A2(_elm_lang$core$String$endsWith, '==', input) && A2(_elm_lang$core$String$endsWith, '  ', output)) ? A2(_elm_lang$core$String$dropRight, 2, output) : ((A2(_elm_lang$core$String$endsWith, '=', input) && A2(_elm_lang$core$String$endsWith, ' ', output)) ? A2(_elm_lang$core$String$dropRight, 1, output) : output);
+		return A2(_elm_lang$core$String$endsWith, '==', input) ? A2(_elm_lang$core$String$dropRight, 2, output) : (A2(_elm_lang$core$String$endsWith, '=', input) ? A2(_elm_lang$core$String$dropRight, 1, output) : output);
 	});
 var _truqu$elm_base64$Base64_Decode$validBase64Regex = _elm_lang$core$Regex$regex('^([A-Za-z0-9\\/+]{4})*([A-Za-z0-9\\/+]{2}[A-Za-z0-9\\/+=]{2})?$');
 var _truqu$elm_base64$Base64_Decode$validate = function (input) {
 	return A2(_elm_lang$core$Regex$contains, _truqu$elm_base64$Base64_Decode$validBase64Regex, input) ? _elm_lang$core$Result$Ok(input) : _elm_lang$core$Result$Err('Invalid base64');
 };
-var _truqu$elm_base64$Base64_Decode$decode = function (input) {
+var _truqu$elm_base64$Base64_Decode$pad = function (input) {
+	var _p13 = A2(
+		_elm_lang$core$Basics$rem,
+		_elm_lang$core$String$length(input),
+		4);
+	switch (_p13) {
+		case 3:
+			return A2(_elm_lang$core$Basics_ops['++'], input, '=');
+		case 2:
+			return A2(_elm_lang$core$Basics_ops['++'], input, '==');
+		default:
+			return input;
+	}
+};
+var _truqu$elm_base64$Base64_Decode$validateAndDecode = function (input) {
 	return A2(
 		_elm_lang$core$Result$map,
 		_truqu$elm_base64$Base64_Decode$stripNulls(input),
 		A2(
 			_elm_lang$core$Result$andThen,
-			function (_p13) {
+			function (_p14) {
 				return _truqu$elm_base64$Base64_Decode$wrapUp(
-					A3(_elm_lang$core$String$foldl, _truqu$elm_base64$Base64_Decode$chomp, _truqu$elm_base64$Base64_Decode$initial, _p13));
+					A3(_elm_lang$core$String$foldl, _truqu$elm_base64$Base64_Decode$chomp, _truqu$elm_base64$Base64_Decode$initial, _p14));
 			},
 			_truqu$elm_base64$Base64_Decode$validate(input)));
+};
+var _truqu$elm_base64$Base64_Decode$decode = function (_p15) {
+	return _truqu$elm_base64$Base64_Decode$validateAndDecode(
+		_truqu$elm_base64$Base64_Decode$pad(_p15));
 };
 
 var _truqu$elm_base64$Base64_Encode$intToBase64 = function (i) {
@@ -7210,16 +7228,27 @@ var _truqu$elm_base64$Base64_Encode$encode = function (input) {
 var _truqu$elm_base64$Base64$decode = _truqu$elm_base64$Base64_Decode$decode;
 var _truqu$elm_base64$Base64$encode = _truqu$elm_base64$Base64_Encode$encode;
 
-var _user$project$Mixpanel_ops = _user$project$Mixpanel_ops || {};
-_user$project$Mixpanel_ops['=>'] = F2(
+var _hawx$elm_mixpanel$Mixpanel_ops = _hawx$elm_mixpanel$Mixpanel_ops || {};
+_hawx$elm_mixpanel$Mixpanel_ops['=>'] = F2(
 	function (v0, v1) {
 		return {ctor: '_Tuple2', _0: v0, _1: v1};
 	});
-var _user$project$Mixpanel$send = F3(
-	function (baseUrl, path, data) {
+var _hawx$elm_mixpanel$Mixpanel$query = A2(
+	_elm_lang$core$List$foldl,
+	F2(
+		function (_p0, acc) {
+			var _p1 = _p0;
+			return _p1._1 ? A2(
+				_elm_lang$core$Basics_ops['++'],
+				acc,
+				A2(_elm_lang$core$Basics_ops['++'], '&', _p1._0)) : acc;
+		}),
+	'?');
+var _hawx$elm_mixpanel$Mixpanel$send = F4(
+	function (baseUrl, ip, path, data) {
 		return A2(
 			_elm_lang$core$Task$map,
-			function (_p0) {
+			function (_p2) {
 				return {ctor: '_Tuple0'};
 			},
 			_elm_lang$http$Http$toTask(
@@ -7230,131 +7259,145 @@ var _user$project$Mixpanel$send = F3(
 						A2(
 							_elm_lang$core$Basics_ops['++'],
 							path,
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								'?data=',
-								_truqu$elm_base64$Base64$encode(
-									A2(_elm_lang$core$Json_Encode$encode, 0, data))))))));
+							_hawx$elm_mixpanel$Mixpanel$query(
+								{
+									ctor: '::',
+									_0: A2(_hawx$elm_mixpanel$Mixpanel_ops['=>'], 'ip=1', ip),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_hawx$elm_mixpanel$Mixpanel_ops['=>'],
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												'data=',
+												_truqu$elm_base64$Base64$encode(
+													A2(_elm_lang$core$Json_Encode$encode, 0, data))),
+											true),
+										_1: {ctor: '[]'}
+									}
+								}))))));
 	});
-var _user$project$Mixpanel$engage = F4(
-	function (_p1, properties, operation, value) {
-		var _p2 = _p1;
-		return A3(
-			_user$project$Mixpanel$send,
-			_p2.baseUrl,
+var _hawx$elm_mixpanel$Mixpanel$engage = F4(
+	function (_p3, properties, operation, value) {
+		var _p4 = _p3;
+		return A4(
+			_hawx$elm_mixpanel$Mixpanel$send,
+			_p4.baseUrl,
+			false,
 			'/engage',
 			_elm_lang$core$Json_Encode$object(
 				{
 					ctor: '::',
 					_0: A2(
-						_user$project$Mixpanel_ops['=>'],
+						_hawx$elm_mixpanel$Mixpanel_ops['=>'],
 						'$token',
-						_elm_lang$core$Json_Encode$string(_p2.token)),
+						_elm_lang$core$Json_Encode$string(_p4.token)),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_user$project$Mixpanel_ops['=>'],
+							_hawx$elm_mixpanel$Mixpanel_ops['=>'],
 							'$distinct_id',
 							_elm_lang$core$Json_Encode$string(properties.distinctId)),
 						_1: {
 							ctor: '::',
-							_0: A2(_user$project$Mixpanel_ops['=>'], operation, value),
+							_0: A2(_hawx$elm_mixpanel$Mixpanel_ops['=>'], operation, value),
 							_1: {ctor: '[]'}
 						}
 					}
 				}));
 	});
-var _user$project$Mixpanel$peopleDelete = F2(
+var _hawx$elm_mixpanel$Mixpanel$peopleDelete = F2(
 	function (config, engageProperties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$delete',
 			_elm_lang$core$Json_Encode$string(''));
 	});
-var _user$project$Mixpanel$peopleUnset = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleUnset = F3(
 	function (config, engageProperties, list) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$unset',
 			_elm_lang$core$Json_Encode$list(
 				A2(_elm_lang$core$List$map, _elm_lang$core$Json_Encode$string, list)));
 	});
-var _user$project$Mixpanel$peopleRemove = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleRemove = F3(
 	function (config, engageProperties, properties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$remove',
 			_elm_lang$core$Json_Encode$object(properties));
 	});
-var _user$project$Mixpanel$peopleUnion = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleUnion = F3(
 	function (config, engageProperties, properties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$union',
 			_elm_lang$core$Json_Encode$object(properties));
 	});
-var _user$project$Mixpanel$peopleAppend = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleAppend = F3(
 	function (config, engageProperties, properties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$append',
 			_elm_lang$core$Json_Encode$object(properties));
 	});
-var _user$project$Mixpanel$peopleAdd = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleAdd = F3(
 	function (config, engageProperties, properties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$add',
 			_elm_lang$core$Json_Encode$object(properties));
 	});
-var _user$project$Mixpanel$peopleSetOnce = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleSetOnce = F3(
 	function (config, engageProperties, properties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$set_once',
 			_elm_lang$core$Json_Encode$object(properties));
 	});
-var _user$project$Mixpanel$peopleSet = F3(
+var _hawx$elm_mixpanel$Mixpanel$peopleSet = F3(
 	function (config, engageProperties, properties) {
 		return A4(
-			_user$project$Mixpanel$engage,
+			_hawx$elm_mixpanel$Mixpanel$engage,
 			config,
 			engageProperties,
 			'$set',
 			_elm_lang$core$Json_Encode$object(properties));
 	});
-var _user$project$Mixpanel$track = F2(
-	function (_p3, event) {
-		var _p4 = _p3;
-		return A3(
-			_user$project$Mixpanel$send,
-			_p4.baseUrl,
+var _hawx$elm_mixpanel$Mixpanel$track = F2(
+	function (_p5, event) {
+		var _p6 = _p5;
+		return A4(
+			_hawx$elm_mixpanel$Mixpanel$send,
+			_p6.baseUrl,
+			_p6.ip,
 			'/track',
 			_elm_lang$core$Json_Encode$object(
 				{
 					ctor: '::',
 					_0: A2(
-						_user$project$Mixpanel_ops['=>'],
+						_hawx$elm_mixpanel$Mixpanel_ops['=>'],
 						'event',
 						_elm_lang$core$Json_Encode$string(event.event)),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_user$project$Mixpanel_ops['=>'],
+							_hawx$elm_mixpanel$Mixpanel_ops['=>'],
 							'properties',
 							_elm_lang$core$Json_Encode$object(
 								{
@@ -7362,7 +7405,7 @@ var _user$project$Mixpanel$track = F2(
 									_0: {
 										ctor: '_Tuple2',
 										_0: 'token',
-										_1: _elm_lang$core$Json_Encode$string(_p4.token)
+										_1: _elm_lang$core$Json_Encode$string(_p6.token)
 									},
 									_1: event.properties
 								})),
@@ -7370,27 +7413,30 @@ var _user$project$Mixpanel$track = F2(
 					}
 				}));
 	});
-var _user$project$Mixpanel$Config = F2(
-	function (a, b) {
-		return {baseUrl: a, token: b};
+var _hawx$elm_mixpanel$Mixpanel$config = function (token) {
+	return {baseUrl: 'http://api.mixpanel.com', token: token, ip: true};
+};
+var _hawx$elm_mixpanel$Mixpanel$Config = F3(
+	function (a, b, c) {
+		return {baseUrl: a, token: b, ip: c};
 	});
-var _user$project$Mixpanel$Event = F2(
+var _hawx$elm_mixpanel$Mixpanel$Event = F2(
 	function (a, b) {
 		return {event: a, properties: b};
 	});
-var _user$project$Mixpanel$EngageProperties = function (a) {
+var _hawx$elm_mixpanel$Mixpanel$EngageProperties = function (a) {
 	return {distinctId: a};
 };
 
-var _user$project$Main$engageDelete = function (config) {
+var _hawx$elm_mixpanel$Main$engageDelete = function (config) {
 	return A2(
-		_user$project$Mixpanel$peopleDelete,
+		_hawx$elm_mixpanel$Mixpanel$peopleDelete,
 		config,
 		{distinctId: '12345'});
 };
-var _user$project$Main$engageUnset = function (config) {
+var _hawx$elm_mixpanel$Main$engageUnset = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleUnset,
+		_hawx$elm_mixpanel$Mixpanel$peopleUnset,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7399,9 +7445,9 @@ var _user$project$Main$engageUnset = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$engageRemove = function (config) {
+var _hawx$elm_mixpanel$Main$engageRemove = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleRemove,
+		_hawx$elm_mixpanel$Mixpanel$peopleRemove,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7414,9 +7460,9 @@ var _user$project$Main$engageRemove = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$engageUnion = function (config) {
+var _hawx$elm_mixpanel$Main$engageUnion = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleUnion,
+		_hawx$elm_mixpanel$Mixpanel$peopleUnion,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7438,9 +7484,9 @@ var _user$project$Main$engageUnion = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$engageAppend = function (config) {
+var _hawx$elm_mixpanel$Main$engageAppend = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleAppend,
+		_hawx$elm_mixpanel$Mixpanel$peopleAppend,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7453,9 +7499,9 @@ var _user$project$Main$engageAppend = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$engageAdd = function (config) {
+var _hawx$elm_mixpanel$Main$engageAdd = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleAdd,
+		_hawx$elm_mixpanel$Mixpanel$peopleAdd,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7468,9 +7514,9 @@ var _user$project$Main$engageAdd = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$engageSetOnce = function (config) {
+var _hawx$elm_mixpanel$Main$engageSetOnce = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleSetOnce,
+		_hawx$elm_mixpanel$Mixpanel$peopleSetOnce,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7483,9 +7529,9 @@ var _user$project$Main$engageSetOnce = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$engageSet = function (config) {
+var _hawx$elm_mixpanel$Main$engageSet = function (config) {
 	return A3(
-		_user$project$Mixpanel$peopleSet,
+		_hawx$elm_mixpanel$Mixpanel$peopleSet,
 		config,
 		{distinctId: '12345'},
 		{
@@ -7498,43 +7544,43 @@ var _user$project$Main$engageSet = function (config) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$track = function (config) {
+var _hawx$elm_mixpanel$Main$track = function (config) {
 	return A2(
-		_user$project$Mixpanel$track,
+		_hawx$elm_mixpanel$Mixpanel$track,
 		config,
 		{
 			event: 'game',
 			properties: {ctor: '[]'}
 		});
 };
-var _user$project$Main$runCommand = F2(
+var _hawx$elm_mixpanel$Main$runCommand = F2(
 	function (config, command) {
 		var _p0 = command;
 		switch (_p0) {
 			case 'track':
-				return _user$project$Main$track(config);
+				return _hawx$elm_mixpanel$Main$track(config);
 			case 'engage_set':
-				return _user$project$Main$engageSet(config);
+				return _hawx$elm_mixpanel$Main$engageSet(config);
 			case 'engage_set_once':
-				return _user$project$Main$engageSetOnce(config);
+				return _hawx$elm_mixpanel$Main$engageSetOnce(config);
 			case 'engage_add':
-				return _user$project$Main$engageAdd(config);
+				return _hawx$elm_mixpanel$Main$engageAdd(config);
 			case 'engage_append':
-				return _user$project$Main$engageAppend(config);
+				return _hawx$elm_mixpanel$Main$engageAppend(config);
 			case 'engage_union':
-				return _user$project$Main$engageUnion(config);
+				return _hawx$elm_mixpanel$Main$engageUnion(config);
 			case 'engage_remove':
-				return _user$project$Main$engageRemove(config);
+				return _hawx$elm_mixpanel$Main$engageRemove(config);
 			case 'engage_unset':
-				return _user$project$Main$engageUnset(config);
+				return _hawx$elm_mixpanel$Main$engageUnset(config);
 			case 'engage_delete':
-				return _user$project$Main$engageDelete(config);
+				return _hawx$elm_mixpanel$Main$engageDelete(config);
 			default:
 				return _elm_lang$core$Task$succeed(
 					{ctor: '_Tuple0'});
 		}
 	});
-var _user$project$Main$sendResult = function (_p1) {
+var _hawx$elm_mixpanel$Main$sendResult = function (_p1) {
 	var _p2 = _p1;
 	return {
 		ctor: '_Tuple2',
@@ -7545,14 +7591,14 @@ var _user$project$Main$sendResult = function (_p1) {
 				return {ctor: '_Tuple0'};
 			},
 			A2(
-				_user$project$Main$runCommand,
-				{baseUrl: _p2.url, token: _p2.token},
+				_hawx$elm_mixpanel$Main$runCommand,
+				{baseUrl: _p2.url, token: _p2.token, ip: true},
 				_p2.command))
 	};
 };
-var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(
+var _hawx$elm_mixpanel$Main$main = _elm_lang$core$Platform$programWithFlags(
 	{
-		init: _user$project$Main$sendResult,
+		init: _hawx$elm_mixpanel$Main$sendResult,
 		update: F2(
 			function (_p5, _p4) {
 				return {
@@ -7582,15 +7628,15 @@ var _user$project$Main$main = _elm_lang$core$Platform$programWithFlags(
 				A2(_elm_lang$core$Json_Decode$field, 'token', _elm_lang$core$Json_Decode$string));
 		},
 		A2(_elm_lang$core$Json_Decode$field, 'command', _elm_lang$core$Json_Decode$string)));
-var _user$project$Main$Flags = F3(
+var _hawx$elm_mixpanel$Main$Flags = F3(
 	function (a, b, c) {
 		return {url: a, token: b, command: c};
 	});
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
-if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', undefined);
+if (typeof _hawx$elm_mixpanel$Main$main !== 'undefined') {
+    _hawx$elm_mixpanel$Main$main(Elm['Main'], 'Main', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

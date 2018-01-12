@@ -28,10 +28,13 @@ test.before(() => {
 test(async t => {
   Elm.Main.worker({ url: 'http://localhost:3000', token: 'what', command: 'track' });
 
-  const data = Buffer.from((await tracked).data, 'base64').toString('utf8');
+  const resp = await tracked;
+  const data = Buffer.from(resp.data, 'base64').toString('utf8');
   const obj = JSON.parse(data);
 
   t.deepEqual(obj, {event: 'game', properties: { token: 'what' }});
+
+  t.deepEqual(resp.ip, '1');
 });
 
 test.after(() => {
