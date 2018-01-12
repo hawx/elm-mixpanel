@@ -4,6 +4,7 @@ module Mixpanel
         , EngageProperties
         , Event
         , Properties
+        , config
         , peopleAdd
         , peopleAppend
         , peopleDelete
@@ -21,13 +22,16 @@ These operation simply map to those described in the [Mixpanel HTTP Tracking API
 documentation](https://mixpanel.com/help/reference/http), so refer to that for
 further clarification.
 
+
 # Setting up
 
-@docs Config
+@docs Config, config
+
 
 # Tracking events
 
 @docs Event, Properties, track
+
 
 # Updating user profiles
 
@@ -94,11 +98,11 @@ type alias EngageProperties =
 
 Mixpanel also recognises some special property names.
 
-- `distinct_id`: a per-user ID that Mixpanel uses to group events together.
-- `time`: the time the event occurred, by default Mixpanel will use the time
-  they receive the event.
-- `ip`: used for adding geolocation information to the event, if not given and
-  if config has `ip = True` then the ip of the request is used.
+  - `distinct_id`: a per-user ID that Mixpanel uses to group events together.
+  - `time`: the time the event occurred, by default Mixpanel will use the time
+    they receive the event.
+  - `ip`: used for adding geolocation information to the event, if not given and
+    if config has `ip = True` then the ip of the request is used.
 
 An example showing all three,
 
@@ -110,6 +114,7 @@ An example showing all three,
                        , ( "ip", Json.Encode.string "203.0.113.9" )
                        ]
         }
+
 -}
 track : Config -> Event -> Task Http.Error ()
 track { baseUrl, token, ip } event =
@@ -242,9 +247,17 @@ send baseUrl ip path data =
         |> Task.map (\_ -> ())
 
 
-query : List (String, Bool) -> String
+query : List ( String, Bool ) -> String
 query =
-    List.foldl (\(value, ok) acc -> if ok then acc ++ "&" ++ value else acc) "?"
+    List.foldl
+        (\( value, ok ) acc ->
+            if ok then
+                acc ++ "&" ++ value
+            else
+                acc
+        )
+        "?"
+
 
 (=>) : a -> b -> ( a, b )
 (=>) =
