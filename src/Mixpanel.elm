@@ -1,20 +1,9 @@
-module Mixpanel
-    exposing
-        ( Config
-        , EngageProperties
-        , Event
-        , Properties
-        , config
-        , peopleAdd
-        , peopleAppend
-        , peopleDelete
-        , peopleRemove
-        , peopleSet
-        , peopleSetOnce
-        , peopleUnion
-        , peopleUnset
-        , track
-        )
+module Mixpanel exposing
+    ( Config, config
+    , Event, Properties, track
+    , EngageProperties, peopleSet, peopleSetOnce, peopleAdd, peopleAppend
+    , peopleUnion, peopleRemove, peopleUnset, peopleDelete
+    )
 
 {-| This library allows you to send events to Mixpanel and update user profiles.
 
@@ -41,7 +30,6 @@ further clarification.
 -}
 
 import Base64
-import Dict exposing (Dict)
 import Http
 import Json.Encode as Json exposing (Value)
 import Task exposing (Task)
@@ -91,9 +79,10 @@ type alias EngageProperties =
 
     track (config "my-token")
         { event = "Signed Up"
-        , properties = [ ( "Referred By", Json.Encode.string "Friend" )
-                       , ( "distinct_id", Json.Encode.string "13793" )
-                       ]
+        , properties =
+            [ ( "Referred By", Json.Encode.string "Friend" )
+            , ( "distinct_id", Json.Encode.string "13793" )
+            ]
         }
 
 Mixpanel also recognises some special property names.
@@ -108,19 +97,20 @@ An example showing all three,
 
     track (config "my-token")
         { event = "Level Complete"
-        , properties = [ ( "Level Number", Json.Encode.int 9 )
-                       , ( "distinct_id", Json.Encode.string "13793" )
-                       , ( "time", Json.Encode.int 1358208000 )
-                       , ( "ip", Json.Encode.string "203.0.113.9" )
-                       ]
+        , properties =
+            [ ( "Level Number", Json.Encode.int 9 )
+            , ( "distinct_id", Json.Encode.string "13793" )
+            , ( "time", Json.Encode.int 1358208000 )
+            , ( "ip", Json.Encode.string "203.0.113.9" )
+            ]
         }
 
 -}
 track : Config -> Event -> Task Http.Error ()
 track { baseUrl, token, ip } event =
     Json.object
-        [ "event" => Json.string event.event
-        , "properties" => Json.object (( "token", Json.string token ) :: event.properties)
+        [ ( "event", Json.string event.event )
+        , ( "properties", Json.object (( "token", Json.string token ) :: event.properties) )
         ]
         |> send baseUrl ip "/track"
 
@@ -130,12 +120,13 @@ track { baseUrl, token, ip } event =
     peopleSet (config "my-token")
         { distinctId = "13793" }
         [ ( "Address", Json.Encode.string "1313 Mockingbird Lane" )
-        , ( "Birthday", Json.Encode.string "1948-01-01" ) ]
+        , ( "Birthday", Json.Encode.string "1948-01-01" )
+        ]
 
 -}
 peopleSet : Config -> EngageProperties -> Properties -> Task Http.Error ()
-peopleSet config engageProperties properties =
-    engage config engageProperties "$set" (Json.object properties)
+peopleSet cfg engageProperties properties =
+    engage cfg engageProperties "$set" (Json.object properties)
 
 
 {-| Same as peopleSet but will not overwrite existing property values.
@@ -146,8 +137,8 @@ peopleSet config engageProperties properties =
 
 -}
 peopleSetOnce : Config -> EngageProperties -> Properties -> Task Http.Error ()
-peopleSetOnce config engageProperties properties =
-    engage config engageProperties "$set_once" (Json.object properties)
+peopleSetOnce cfg engageProperties properties =
+    engage cfg engageProperties "$set_once" (Json.object properties)
 
 
 {-| Takes properties with numerical values and adds the values to the existing
@@ -160,21 +151,21 @@ value.
 
 -}
 peopleAdd : Config -> EngageProperties -> Properties -> Task Http.Error ()
-peopleAdd config engageProperties properties =
-    engage config engageProperties "$add" (Json.object properties)
+peopleAdd cfg engageProperties properties =
+    engage cfg engageProperties "$add" (Json.object properties)
 
 
 {-| Takes properties and appends each value to a list associated with the
 property.
 
     peopleAppend (config "my-token")
-         { distinctId = "13793" }
-         [ ( "Power Ups", Json.Encode.string "Bubble Lead" ) ]
+        { distinctId = "13793" }
+        [ ( "Power Ups", Json.Encode.string "Bubble Lead" ) ]
 
 -}
 peopleAppend : Config -> EngageProperties -> Properties -> Task Http.Error ()
-peopleAppend config engageProperties properties =
-    engage config engageProperties "$append" (Json.object properties)
+peopleAppend cfg engageProperties properties =
+    engage cfg engageProperties "$append" (Json.object properties)
 
 
 {-| Takes properties with list values and merges them with the existing profile
@@ -183,16 +174,17 @@ values.
     peopleUnion (config "my-token")
         { distinctId = "13793" }
         [ ( "Items purchased"
-          , Json.Encode.list [ Json.Encode.string "socks"
-                             , Json.Encode.string "shirts"
-                             ]
+          , Json.Encode.list
+                [ Json.Encode.string "socks"
+                , Json.Encode.string "shirts"
+                ]
           )
         ]
 
 -}
 peopleUnion : Config -> EngageProperties -> Properties -> Task Http.Error ()
-peopleUnion config engageProperties properties =
-    engage config engageProperties "$union" (Json.object properties)
+peopleUnion cfg engageProperties properties =
+    engage cfg engageProperties "$union" (Json.object properties)
 
 
 {-| Takes properties and removes the values from the associated lists on the
@@ -204,8 +196,8 @@ profile.
 
 -}
 peopleRemove : Config -> EngageProperties -> Properties -> Task Http.Error ()
-peopleRemove config engageProperties properties =
-    engage config engageProperties "$remove" (Json.object properties)
+peopleRemove cfg engageProperties properties =
+    engage cfg engageProperties "$remove" (Json.object properties)
 
 
 {-| Takes a list of property names and removes them from the profile.
@@ -216,8 +208,11 @@ peopleRemove config engageProperties properties =
 
 -}
 peopleUnset : Config -> EngageProperties -> List String -> Task Http.Error ()
-peopleUnset config engageProperties list =
-    engage config engageProperties "$unset" (Json.list (List.map Json.string list))
+peopleUnset cfg engageProperties list =
+    engage cfg
+        engageProperties
+        "$unset"
+        (Json.list Json.string list)
 
 
 {-| Delete the profile from Mixpanel.
@@ -226,24 +221,32 @@ peopleUnset config engageProperties list =
 
 -}
 peopleDelete : Config -> EngageProperties -> Task Http.Error ()
-peopleDelete config engageProperties =
-    engage config engageProperties "$delete" (Json.string "")
+peopleDelete cfg engageProperties =
+    engage cfg engageProperties "$delete" (Json.string "")
 
 
 engage : Config -> EngageProperties -> String -> Value -> Task Http.Error ()
 engage { baseUrl, token } properties operation value =
     Json.object
-        [ "$token" => Json.string token
-        , "$distinct_id" => Json.string properties.distinctId
-        , operation => value
+        [ ( "$token", Json.string token )
+        , ( "$distinct_id", Json.string properties.distinctId )
+        , ( operation, value )
         ]
         |> send baseUrl False "/engage"
 
 
 send : String -> Bool -> String -> Value -> Task Http.Error ()
 send baseUrl ip path data =
-    Http.getString (baseUrl ++ path ++ query [ "ip=1" => ip, "data=" ++ Base64.encode (Json.encode 0 data) => True ])
-        |> Http.toTask
+    { method = "GET" -- TODO API says this should be post
+    , headers = []
+
+    -- TODO when this is post, headers should be [ Http.header "accept" "text/plain" , Http.header "content-type" "application/json" ]
+    , url = baseUrl ++ path ++ query [ ( "ip=1", ip ), ( "data=" ++ Base64.encode (Json.encode 0 data), True ) ]
+    , body = Http.emptyBody -- TODO this should be the base 64 encoded json
+    , resolver = Http.stringResolver (\_ -> Ok ())
+    , timeout = Nothing
+    }
+        |> Http.task
         |> Task.map (\_ -> ())
 
 
@@ -253,13 +256,8 @@ query =
         (\( value, ok ) acc ->
             if ok then
                 acc ++ "&" ++ value
+
             else
                 acc
         )
         "?"
-
-
-(=>) : a -> b -> ( a, b )
-(=>) =
-    (,)
-infixl 0 =>
